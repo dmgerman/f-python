@@ -1,0 +1,136 @@
+* Functional python: passing a list/tuple instead of individual parameters
+
+- In ocaml and sml, all functions take one parameter
+  - using pattern matching, it /feels/ as if we can either pass:
+    - a tuple
+    - or individual parameters
+
+- Example:
+
+  #+begin_src sml   :exports both
+  fun f (a,b) = a + b
+
+  val a = (1,2)
+
+  val b = f (1,2)
+  val c = f a
+  #+end_src
+
+  #+RESULTS:
+  #+begin_example
+  val f = fn : int * int -> int
+  val a = (1,2) : int * int
+  val b = 3 : int
+  val c = 3 : int
+  END
+  #+end_example
+
+- Something similar can be achieved in python
+  - though not as transparent
+
+- Called *unpacking argument list*
+  
+- Full documentation:
+
+  https://docs.python.org/3/tutorial/controlflow.html#unpacking-argument-lists
+
+* Example:
+
+- use **tuple* instead of the arguments
+
+#+begin_src python   :exports both :results output
+import sys
+
+def f(a,b):
+    return a+b
+
+print(f(3 , 2))
+t = (3, 2)
+
+
+# this will fail, we pass only one parameter, t
+try:
+    print(f(t))
+except TypeError:
+    print("Sorry Dave, I cannot do that")
+    print("  ", repr(sys.exception()))
+
+
+#but this does work
+print(f(*t))
+#+end_src
+
+#+RESULTS:
+#+begin_example
+5
+Sorry Dave, I cannot do that
+   TypeError("f() missing 1 required positional argument: 'b'")
+5
+#+end_example
+
+* Dictionaries can be used as lists of named parameters
+
+#+begin_src python   :exports both :results output
+def f(a,b):
+    return a+b
+
+d = dict()
+d["a"] = 10
+d["b"] = 20
+
+print(f(**d))
+#+end_src
+
+#+RESULTS:
+#+begin_example
+30
+#+end_example
+
+
+* But they must have exactly the attributes names, no more, no less
+
+#+begin_src python   :exports both :results output
+import sys
+def f(a,b):
+    return a+b
+
+d = dict()
+d["a"] = 10
+try:
+    print(f(**d))
+except TypeError:
+    print("Sorry Dave, I cannot do that")
+    print("  ", repr(sys.exception()))
+
+d["b"] = 20
+# c is not an argument to f
+d["c"] = 1000
+
+#but this does
+try:
+    print(f(**d))
+except TypeError:
+    print("Sorry Dave, I cannot do that")
+    print("  ", repr(sys.exception()))
+
+#+end_src
+
+#+RESULTS:
+#+begin_example
+Sorry Dave, I cannot do that
+   TypeError("f() missing 1 required positional argument: 'b'")
+Sorry Dave, I cannot do that
+   TypeError("f() got an unexpected keyword argument 'c'")
+#+end_example
+
+
+#+end_src
+
+* Conclusion
+
+- The *unpacking argument list* is very powerful
+- We can pass a tuple or a list instead of each argument individually
+- code for this video at:
+  http://github.com/dmgerman/f-python/passing_a_list_instead
+
+  

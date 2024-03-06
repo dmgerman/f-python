@@ -1,0 +1,110 @@
+* Memoization in functional python
+
+- Memoization is implemented as two decorators in python
+
+  - @functools.cache (Python 3.8 and later)
+  - @functools.lru_cache
+
+- Documentation:
+  https://docs.python.org/3/library/functools.html#module-functools    
+    
+* Problem:
+
+This code is O(2^n). fibonacci(40) takes seconds to compute
+
+#+begin_src python   :exports both :results output
+import time
+
+def fibonacci(n):
+    match n:
+        case 0 | 1:
+            return n
+        case _ :
+            return fibonacci(n-1) + fibonacci(n-2)
+
+# let us time the call
+start = time.time()
+print(fibonacci(40))
+end = time.time()
+print(end-start, " seconds")
+#+end_src
+
+#+RESULTS:
+#+begin_example
+102334155
+12.838772058486938  seconds
+#+end_example
+
+* Solution: memoize it
+
+- it becomes almost instantaneous
+  - O(n*log n)
+- the size of the cache is not limited
+  - *it might run out of memory!*
+- uses a dictionary for its cache    
+
+#+begin_src python   :exports both :results output
+import functools
+import time
+
+@functools.cache
+def fibonacci(n):
+    match n:
+        case 0 | 1:
+            return n
+        case _ :
+            return fibonacci(n-1) + fibonacci(n-2)
+
+# let us time the call
+start = time.time()
+print(fibonacci(300))
+end = time.time()
+print("seconds %10.5f"%(end-start,))
+#+end_src
+
+#+RESULTS:
+#+begin_example
+222232244629420445529739893461909967206666939096499764990979600
+seconds    0.00008
+#+end_example
+
+* Alternative: lru_cache
+
+- uses LRU replacement algorithm
+- you can specify the maximum size of the dictionary
+  - unlimited if parameter is None
+
+#+begin_src python   :exports both :results output
+import functools
+import time
+
+@functools.lru_cache(100)
+def fibonacci(n):
+    match n:
+        case 0 | 1:
+            return n
+        case _ :
+            return fibonacci(n-1) + fibonacci(n-2)
+
+# let us time the call
+start = time.time()
+print(fibonacci(300))
+end = time.time()
+print("seconds %10.5f"%(end-start,))
+#+end_src
+
+#+RESULTS:
+#+begin_example
+222232244629420445529739893461909967206666939096499764990979600
+seconds    0.00010
+#+end_example
+
+* Conclusions
+
+- Easy to use
+- Consider the size of a useful/reasonable cache
+  - use *lru_cache* instead of *cache*
+
+- code for this video:
+  http://github.com/dmgerman/f-python/memoization
+

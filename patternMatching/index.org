@@ -1,0 +1,305 @@
+* Functional python: Pattern matching
+
+- Introduced in python 3.10
+
+- Full documentation in https://peps.python.org/pep-0636/
+
+- Similar to pattern matching in ML family of languages
+  - with syntax very similar to *Ocaml*
+
+- code for this video at:
+  http://github.com/dmgerman/f-python/patternmatching
+
+* Example
+
+#+begin_src python   :exports both :results output
+import collections
+
+MyRecord = collections.namedtuple("MyRecord", "f1 f2")
+
+def test_pm(val):
+    match val:
+        # match constants
+        case 10:
+            print("Got a 10")
+        case (5,b):
+            print(f"Constant: a 5 and [{b}]")
+        # match objects 
+        case MyRecord(a,b):
+            print(f"My record : a [{a}] b [{b}]")
+        # match tuple of size 3
+        case (a,b,c):
+            print(f"Tuple: a [{a}] b [{b}] [{c}]")
+        # match a pair
+        case (a,b):
+            print(f"Pair: a [{a}] b [{b}]")
+        # match list of any size
+        case [a,*b]:
+            print(f"head/tail: head [{a}] tail [{b}]")
+        case _:
+            print("it did not match anything")
+
+
+test_pm(5)
+test_pm(10 > 20)
+print()
+test_pm(10)
+test_pm((5,10))
+test_pm(MyRecord(1,2))
+test_pm((10,20,30))
+test_pm((10,20,30,40))
+test_pm((10,20))
+#+end_src
+
+#+RESULTS:
+#+begin_example
+it did not match anything
+it did not match anything
+
+Got a 10
+Constant: a 5 and [10]
+My record : a [1] b [2]
+Tuple: a [10] b [20] [30]
+head/tail: head [10] tail [[20, 30, 40]]
+Pair: a [10] b [20]
+#+end_example
+
+* Combining patterns
+
+- we can have more than one pattern per case
+
+#+begin_src python   :exports both :results output
+def test_pm(val):
+    match val:
+        case (10,b) | (20,b):
+            print(f"Split a 10 or 20 with [{b}]")
+        case _:
+            print("it did not match anything")
+
+
+test_pm((10,6))
+test_pm((30,"abc"))
+test_pm((20,False))
+
+#+end_src
+
+#+RESULTS:
+#+begin_example
+Split a 10 or 20 with [6]
+it did not match anything
+Split a 10 or 20 with [False]
+#+end_example
+
+
+* Combining patterns...
+
+- but must match number and names of bindings
+
+This code generates and error
+
+#+begin_src python   :exports both :results output
+def test_pm(val):
+    match val:
+        case (10,b) | (20,a):
+            print(f"Split a 10 or 20 with [{b}]")
+        case _:
+            print("it did not match anything")
+
+
+test_pm((10,6))
+test_pm((30,"abc"))
+test_pm((20,False))
+
+#+end_src
+
+#+RESULTS:
+
+
+* They can match dictionaries
+
+and their contents
+
+#+begin_src python   :exports both :results output
+def test_pm(val):
+    match val:
+        case {"name": a, "address": b}:
+            print(f"Match dictionary a [{a}] b [{b}]")
+        case _:
+            print("it did not match anything")
+
+
+d = dict()
+d["name"] = "alfred"
+d["address"] = "victoria"
+d["other"] = ""
+
+test_pm(d)
+d = dict()
+d["address"] = "victoria"
+d["other"] = ""
+
+test_pm(d)
+
+
+#+end_src
+
+#+RESULTS:
+#+begin_example
+Match dictionary a [alfred] b [victoria]
+it did not match anything
+#+end_example
+
+* And they be used for type checking!
+
+#+begin_src python   :exports both :results output
+def test_pm(val):
+    match val:
+        case str(a):
+            print(f"Match string a [{a}]")
+        case int(a):
+            print(f"Match int a [{a}]")
+        case dict(a):
+            print(f"Match dict a [{a}]")
+        case list(a):
+            print(f"Match list a [{a}]")
+        case tuple(a):
+            print(f"Match tuple a [{a}]")
+        case _:
+            print("it did not match anything")
+
+
+d = dict()
+test_pm(d)
+test_pm("abc")
+test_pm(10)
+test_pm([1,2,3])
+test_pm(1.3)
+#+end_src
+
+#+RESULTS:
+#+begin_example
+Match dict a [{}]
+Match string a [abc]
+Match int a [10]
+Match list a [[1, 2, 3]]
+it did not match anything
+#+end_example
+
+
+
+* Limitations
+
+- a single, simple pattern matches everything!
+
+This code generates an error
+
+#+begin_src python   :exports both :results output
+import collections
+
+def test_pm(val):
+    match val:
+        case a:
+            print(f"Match one thing [{a}]")
+        case MyRecord(a,b):
+            print(f"My record : a [{a}] b [{b}]")
+        case (a,b,c):
+            print(f"Tuple: a [{a}] b [{b}] [{c}]")
+        # match a tuple
+        case (a,b):
+            print(f"Pair: a [{a}] b [{b}]")
+        # match list/tuples of any size
+        case _:
+            print("it did not match anything")
+
+
+test_pm((10,6))
+test_pm((30,"abc"))
+test_pm((20,False))
+
+#+end_src
+
+#+RESULTS:
+
+#+begin_src python   :exports both :results output
+import collections
+
+def test_pm(val):
+    match val:
+        case a:
+            print(f"Match one thing [{a}]")
+
+test_pm((10,6))
+test_pm((30,"abc"))
+test_pm((20,False))
+
+#+end_src
+
+#+RESULTS:
+#+begin_example
+Match one thing [(10, 6)]
+Match one thing [(30, 'abc')]
+Match one thing [(20, False)]
+#+end_example
+
+* Limitations...
+
+- lists match tuples, and
+- tuples match lists
+
+- with *no warning*
+
+#+begin_src python   :exports both :results output
+def test_pm(val):
+    match val:
+        case (a,b):
+            print(f"Pair [{a}] [{b}]")
+        case [a,b]:
+            print(f"list [{a}] [{b}]")
+        case _:
+            print("it did not match anything")
+
+
+test_pm((10,6))
+test_pm([20,"abc"])
+#+end_src
+
+#+RESULTS:
+#+begin_example
+Pair [10] [6]
+Pair [20] [abc]
+#+end_example
+  
+
+#+begin_src python   :exports both :results output
+
+def test_pm(val):
+    match val:
+        case [a,b]:
+            print(f"list [{a}] [{b}]")
+        case (a,b):
+            print(f"Pair [{a}] [{b}]")
+        case _:
+            print("it did not match anything")
+
+
+test_pm((10,6))
+test_pm([20,"abc"])
+
+
+#+end_src
+
+#+RESULTS:
+#+begin_example
+list [10] [6]
+list [20] [abc]
+#+end_example
+
+
+* Conclusions
+
+- powerful feature with some intrinsic limitations due
+  to the dynamic typing nature of python
+- for more info:
+    https://peps.python.org/pep-0636/
+- code for this video at:
+  http://github.com/dmgerman/f-python/patternmatching

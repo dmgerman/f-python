@@ -1,0 +1,96 @@
+* Currying in Functional Python
+
+- Provided by *functools.partial*
+
+- Documentation:
+  https://docs.python.org/3/library/functools.html#functools.partial
+
+* Example:
+
+#+begin_src python   :exports both :results output
+import functools
+
+def f(a,b):
+    return a+b
+
+add_5 = functools.partial(f, b=5)
+
+print(add_5(3))
+
+#+end_src
+
+#+RESULTS:
+#+begin_example
+8
+#+end_example
+
+* Limitations: by default currying only last to first parameter
+
+- We can do partial application of any parameter, but
+  when we call the function, the original order of parameters remain!
+- it means we need to do currying *backwards*
+
+#+begin_src python   :exports both :results output
+import functools
+import sys
+
+def f(a,b,c):
+    return a+b+c
+
+add_5 = functools.partial(f, a=5)
+
+# this works
+print(add_5(b=3,c=10))
+
+# but this does not work
+try:
+    print(add_5(3,10))
+except TypeError:
+    print("Sorry Dave, I cannot do that")
+    print("  ", repr(sys.exception()))
+
+#+end_src
+
+#+RESULTS:
+#+begin_example
+18
+Sorry Dave, I cannot do that
+   TypeError("f() got multiple values for argument 'a'")
+#+end_example
+
+* But this works
+
+#+begin_src python   :exports both :results output
+import functools
+import sys
+
+def f(a,b,c):
+    return a+b+c
+
+add_5 = functools.partial(f, c=5)
+add_5_and_10 = functools.partial(f, b=10,c=5)
+# this works
+print(add_5(3,10))
+print(add_5_and_10(3))
+
+#+end_src
+
+#+RESULTS:
+#+begin_example
+18
+18
+#+end_example
+
+* Conclusion
+
+- *functools.partial* provides currying
+- very useful to avoid anonymous functions that simply wrap parameters
+  - more on that in map/filter
+- by default, curries parameters *backwards*
+  - but better than nothing
+
+- code for this video:
+  http://github.com/dmgerman/f-python/currying
+
+  
+  

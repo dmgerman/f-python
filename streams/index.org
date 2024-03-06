@@ -1,0 +1,149 @@
+* Streams: functional python
+
+- Streams are a wonderful data structure
+- By being *lazy*, they allow the processing of potentially infinite
+  sequences
+- Extremely *powerful, efficient and expressive* when
+  combined with map/filter/reduce
+
+- In python, streams are called generators and iterators
+
+- *Do not confuse functional streams with python streams*
+
+- Documentation:
+  https://docs.python.org/3/reference/expressions.html#generator-expressions
+  https://peps.python.org/pep-0255/  
+
+* How to consume a stream
+
+- given st is a stream
+  - calling *next(st)* returns next value (consuming it)
+- a stream cannot be rewound
+  - once it has advanced (using next) it cannot go back
+- if the stream is finite
+  - once a stream is consumed,
+    the *StopIteration* exception is raised
+  
+* Files are streams
+
+- they are typically finite
+
+#+begin_src python   :exports both :results output
+import sys
+try:
+    with open("/tmp/input.txt", "r") as f:
+        print(next(f))
+        print(next(f))
+        print(next(f))
+        print(next(f))
+except StopIteration:
+    print("Sorry Dave, I cannot do that")
+    print("  ", repr(sys.exception()))
+#+end_src
+
+#+RESULTS:
+#+begin_example
+line 1
+
+line 2
+
+line 3
+
+Sorry Dave, I cannot do that
+   StopIteration()
+#+end_example
+
+* generator comprehensions are streams
+
+#+begin_src python   :exports both :results output
+import sys
+try:
+    f = (a for a in [1,2,3])
+    print(next(f))
+    print(next(f))
+    print(next(f))
+    print(next(f))
+except StopIteration:
+    print("Sorry Dave, I cannot do that")
+    print("  ", repr(sys.exception()))
+#+end_src
+
+#+RESULTS:
+#+begin_example
+1
+2
+3
+Sorry Dave, I cannot do that
+   StopIteration()
+#+end_example
+
+* We can convert a collection into a stream
+
+- use iter
+  https://docs.python.org/3/library/functions.html#iter
+
+#+begin_src python   :exports both :results output
+import sys
+try:
+    f = iter([1,2,3])
+    print(next(f))
+    print(next(f))
+    print(next(f))
+    print(next(f))
+except StopIteration:
+    print("Sorry Dave, I cannot do that")
+    print("  ", repr(sys.exception()))
+#+end_src
+
+#+RESULTS:
+#+begin_example
+1
+2
+3
+Sorry Dave, I cannot do that
+   StopIteration()
+#+end_example
+
+* Creating them is easy
+- the magic sauce: *yield*
+  https://docs.python.org/3/reference/simple_stmts.html#yield
+
+#+begin_src python   :exports both :results output
+def stream_function(f):
+    num = 1
+    while True:
+        yield f(num)  # <--- this is where the next value is created
+                   # and execution stops until next is called
+        num += 1
+
+def factorial(n):
+    if n == 0:
+        return 1
+    else:
+        return n * factorial(n-1)
+
+s = stream_function(factorial)
+print(next(s))
+print(next(s))
+print(next(s))
+print(next(s))
+print(next(s))
+#+end_src
+
+#+RESULTS:
+#+begin_example
+1
+2
+6
+24
+120
+#+end_example
+
+* Conclusions
+
+- Streams are everywhere in python
+  - called *generators* and *iterators*
+  - we'll use them extensively in future videos
+
+- code for this video:
+  http://github.com/dmgerman/f-python/streams

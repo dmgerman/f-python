@@ -1,0 +1,79 @@
+* Functional python: Recursion
+
+- Full documentation in https://peps.python.org/pep-0636/
+
+- Similar to pattern matching in ML family of languages
+  - with syntax very similar to *Ocaml*
+
+- code for this video at:
+  http://github.com/dmgerman/f-python/recursion
+
+* Python is not tail-recursive
+
+Guido on Tail recursion: https://neopythonic.blogspot.com/2009/04/tail-recursion-elimination.html
+
+#+begin_quote
+"let me defend my position (which is that I don't want
+TRE [Tail Recursion Optimization] in the language).
+If you want a short answer, it's simply unpythonic."
+#+end_quote
+
+https://bugs.python.org/issue1684603
+
+
+* The problem
+
+#+begin_src python   :exports both :results output
+def sum_up_to(i):
+   if i == 0:
+      return i
+   else:
+      return (i + sum_up_to(i-1))
+
+print(sum_up_to(1000))
+
+#+end_src
+
+#+RESULTS:
+
+
+* so what can we do?
+
+#+begin_src python   :exports both :results output
+import sys
+
+def sum_up_to(i):
+   if i == 0:
+      return i
+   else:
+      return (i + sum_up_to(i-1))
+
+print(f"Recursion limit: {sys.getrecursionlimit()}\n")
+
+try:
+   print(sum_up_to(100))
+   print(sum_up_to(1000))
+except RecursionError:
+   print(">>>>>Sorry Dave, I cannot do that\n")
+
+
+#+end_src
+
+#+RESULTS:
+#+begin_example
+Recursion limit: 1000
+
+5050
+>>>>>Sorry Dave, I cannot do that
+
+#+end_example
+
+* Conclusions
+
+- We can only use recursion in very limited situations
+  - remember to check the value of *sys.getrecursionlimit()*
+
+- code for this video at:
+  http://github.com/dmgerman/f-python/recursion
+
+

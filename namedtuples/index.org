@@ -1,0 +1,104 @@
+* Functional python: records/named tuples
+
+- How to easily define records
+
+- documentation:
+  https://docs.python.org/3/library/collections.html#collections.namedtuple
+
+- code for this video at:
+  http://github.com/dmgerman/f-python/namedtuples
+
+* Using tuples of error prone
+
+- when we store data in a tuple:
+  - we *must* remember which position stores what
+  - very *error prone*
+
+- instead, use records
+  - called *namedtuples* in python
+  - use *.field* name to access to attributes of tuple
+
+* Example
+
+- Use MyRecord, instead of a pair
+
+#+begin_src python   :exports both :results output
+import collections
+
+MyRecord = collections.namedtuple("MyRecord", "f1 f2")
+
+a = MyRecord(10, "abc")
+# prints names used in its definition
+print("Value:   ", a)
+print("Type:    ",type(a))
+# and we can access its fields
+
+print(f"Field f1:", a.f1)
+print(f"Field f2:", a.f2)
+#+end_src
+
+#+RESULTS:
+#+begin_example
+Value:    MyRecord(f1=10, f2='abc')
+Type:     <class '__main__.MyRecord'>
+Field f1: 10
+Field f2: abc
+#+end_example
+
+* And we can easily create them from lists
+
+#+begin_src python   :exports both :results output
+import collections
+
+lst = [(1,"one"), (10, "ten"), (4, "four")]
+
+MyRecord = collections.namedtuple("MyRecord", "f1 f2")
+
+# pass a tuple to the constructor
+records = list(map(lambda x: MyRecord(*x), lst))
+# prints names used in its definition
+print(records)
+
+#+end_src
+
+#+RESULTS:
+#+begin_example
+[MyRecord(f1=1, f2='one'), MyRecord(f1=10, f2='ten'), MyRecord(f1=4, f2='four')]
+#+end_example
+
+#+end_src
+
+
+* And we can easily create them from iterators
+
+#+begin_src python   :exports both :results output
+
+import collections
+
+lst = [(1,"one"), (10, "ten"), (4, "four")]
+
+MyRecord = collections.namedtuple("MyRecord", "f1 f2")
+
+
+records = list(map(lambda x: MyRecord(*x), lst))
+# prints names used in its definition
+print(records)
+
+#+end_src
+
+#+RESULTS:
+#+begin_example
+[MyRecord(f1=1, f2='one'), MyRecord(f1=10, f2='ten'), MyRecord(f1=4, f2='four')]
+#+end_example
+
+#+end_src
+
+
+* Conclusions
+
+- Powerful and easy to use data structure to create records
+- Compared to tuples, records reduce errors
+- code for this video at:
+  http://github.com/dmgerman/f-python/namedtuples
+
+  
