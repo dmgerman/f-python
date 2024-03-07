@@ -1,0 +1,34 @@
+* Functional python: introduction
+
+The goals of these videos are:
+
+- to map functional programming concepts to python constructs
+- to introduce functional programming features to
+  a python programmer
+
+What these videos are not:
+- An introduction to python
+- An introduction to functional programming
+
+* The plan
+
+1. The basics: functional programming (FP) features in python
+   - e.g. anonymous functions,
+          map/filter/fold,
+          streams,
+          memoization, etc.
+2. How to use them:
+  - solving some problems using FP python
+3. The future:
+   - advanced features
+   - other?
+
+* The how
+- Short videos, each focusing on one topic
+  - organized into playlist
+- Notes in github:
+  [[http://github.com/dmgerman/f-python/]]
+  - organized links to all videos
+- Videos will be uploaded over time
+
+  
