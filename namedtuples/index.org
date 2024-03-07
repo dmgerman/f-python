@@ -8,7 +8,25 @@
 - code for this video at:
   http://github.com/dmgerman/f-python/namedtuples
 
-* Using tuples of error prone
+* Using tuples is error prone
+- e.g. reading a csv file as a tuple
+
+#+begin_src python   :exports both :results output
+import csv
+with open("orders.csv") as f:
+    orders = csv.reader(f, delimiter=',')
+    for o in orders:
+        print(o)
+        print('  The order id is ', o[0], ' and the date is', o[2])
+#+end_src
+
+#+RESULTS:
+#+begin_example
+['10309', '1', '1996-09-19', '210']
+  The order id is  10309  and the date is 1996-09-19
+['10308', '2', '1996-09-18', '43']
+  The order id is  10308  and the date is 1996-09-18
+#+end_example
 
 - when we store data in a tuple:
   - we *must* remember which position stores what
@@ -24,15 +42,40 @@
 
 #+begin_src python   :exports both :results output
 import collections
+import csv
+
+Order = collections.namedtuple("Orders", "id customerid date total")
+
+with open("orders.csv") as f:
+    orders = csv.reader(f, delimiter=',')
+    for o in orders:
+        o = Order(*o) # equivalent to Order(o[0],o[1],o[2],o[3])
+        print(o)
+        print('  The order id is ', o.id, ' and the date is', o.date)
+#+end_src
+
+#+RESULTS:
+#+begin_example
+Orders(id='10309', customerid='1', date='1996-09-19', total='210')
+  The order id is  10309  and the date is 1996-09-19
+Orders(id='10308', customerid='2', date='1996-09-18', total='43')
+  The order id is  10308  and the date is 1996-09-18
+#+end_example
+
+* Syntax
+
+#+begin_src python   :exports both :results output
+import collections
 
 MyRecord = collections.namedtuple("MyRecord", "f1 f2")
 
+# creating a MyRecord
 a = MyRecord(10, "abc")
-# prints names used in its definition
+
 print("Value:   ", a)
 print("Type:    ",type(a))
-# and we can access its fields
 
+# how to access its fields
 print(f"Field f1:", a.f1)
 print(f"Field f2:", a.f2)
 #+end_src
@@ -44,54 +87,6 @@ Type:     <class '__main__.MyRecord'>
 Field f1: 10
 Field f2: abc
 #+end_example
-
-* And we can easily create them from lists
-
-#+begin_src python   :exports both :results output
-import collections
-
-lst = [(1,"one"), (10, "ten"), (4, "four")]
-
-MyRecord = collections.namedtuple("MyRecord", "f1 f2")
-
-# pass a tuple to the constructor
-records = list(map(lambda x: MyRecord(*x), lst))
-# prints names used in its definition
-print(records)
-
-#+end_src
-
-#+RESULTS:
-#+begin_example
-[MyRecord(f1=1, f2='one'), MyRecord(f1=10, f2='ten'), MyRecord(f1=4, f2='four')]
-#+end_example
-
-#+end_src
-
-
-* And we can easily create them from iterators
-
-#+begin_src python   :exports both :results output
-
-import collections
-
-lst = [(1,"one"), (10, "ten"), (4, "four")]
-
-MyRecord = collections.namedtuple("MyRecord", "f1 f2")
-
-
-records = list(map(lambda x: MyRecord(*x), lst))
-# prints names used in its definition
-print(records)
-
-#+end_src
-
-#+RESULTS:
-#+begin_example
-[MyRecord(f1=1, f2='one'), MyRecord(f1=10, f2='ten'), MyRecord(f1=4, f2='four')]
-#+end_example
-
-#+end_src
 
 
 * Conclusions
