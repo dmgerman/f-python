@@ -1,5 +1,10 @@
 * Functional python: records/namedtuples
 
+- Video: https://youtu.be/ctO0umkmARg
+- Rest of the [[http://github.com/dmgerman/f-python][Functional Python]] series
+
+* Introduction
+
 - How to easily define records
 
 - documentation:

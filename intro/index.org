@@ -1,4 +1,8 @@
 * Functional python: introduction
+   - video https://youtu.be/aYeHmZlZxXo
+   - Rest of the  [[http://github.com/dmgerman/f-python][Functional Python]] series
+
+* introduction
 
 The goals of these videos are:
 

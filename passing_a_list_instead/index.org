@@ -1,4 +1,8 @@
 * Functional python: passing a list/tuple instead of individual parameters
+   - Video:    https://youtu.be/fZSp8ZETWeQ
+   - Rest of the  [[http://github.com/dmgerman/f-python][Functional Python]] series
+
+* Introduction
 
 - This feature is called *unpacking argument list* in python
 
