@@ -1,0 +1,30 @@
+
+* Functional python
+The goal of these notes is to illustrate how functional
+programming concepts are implemented (or not) in python.
+
+** Introduction
+
+0. [[file:intro/index.org][Introducing the Function Python series]]
+
+** The concepts
+
+1. [[file:passing_a_list_instead/index.org][Passing a tuple instead of each individual parameter to a function]]:
+   python's /unpacking argument list/
+2. [[file:namedtuples/index.org][Records]]: python's /namedtuple/
+3. [[file:patternMatching/index.org][Pattern Matching]]: python's /structural pattern matching/
+4. Tail Recursion: python does not have tail recursion
+5. Memoization: python's /cache decorators/
+6. Currying: python's /partial application/
+7. Streams: python's /iterators/ and /generators/
+8. Map and filter
+9. Folding: reduce
+10. Stream processing: functools
+
+** Advanced
+
+- Parallel processing
+- Adding "static typing" to python
+
+
+   
