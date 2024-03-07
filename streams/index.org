@@ -1,4 +1,4 @@
-* Streams: functional python
+* functional python: Streams
 
 - Streams are a wonderful data structure
 - By being *lazy*, they allow the processing of potentially infinite
@@ -6,7 +6,7 @@
 - Extremely *powerful, efficient and expressive* when
   combined with map/filter/reduce
 
-- In python, streams are called generators and iterators
+- In python, streams are *called generators and iterators*
 
 - *Do not confuse functional streams with python streams*
 
@@ -20,13 +20,14 @@
   - calling *next(st)* returns next value (consuming it)
 - a stream cannot be rewound
   - once it has advanced (using next) it cannot go back
-- if the stream is finite
-  - once a stream is consumed,
-    the *StopIteration* exception is raised
+- if the stream is finite, once it is consumed,
+  - the *StopIteration* exception is raised if next is called
+- *map, filter* and many other functions return streams
+  - more on that later
   
 * Files are streams
 
-- they are typically finite
+- files are typically finite streams
 
 #+begin_src python   :exports both :results output
 import sys
@@ -104,13 +105,15 @@ Sorry Dave, I cannot do that
    StopIteration()
 #+end_example
 
-* Creating them is easy
+* Creating a stream is easy
 - the magic sauce: *yield*
   https://docs.python.org/3/reference/simple_stmts.html#yield
 
 #+begin_src python   :exports both :results output
+# create an infinite stream f(1), f(2), f(3), f(4)... 
 def stream_function(f):
     num = 1
+    # this infinite loop makes the stream infinite
     while True:
         yield f(num)  # <--- this is where the next value is created
                    # and execution stops until next is called
@@ -122,6 +125,7 @@ def factorial(n):
     else:
         return n * factorial(n-1)
 
+# create a stream with the factorial of the natural numbers
 s = stream_function(factorial)
 print(next(s))
 print(next(s))

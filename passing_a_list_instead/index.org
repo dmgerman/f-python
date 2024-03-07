@@ -1,19 +1,30 @@
 * Functional python: passing a list/tuple instead of individual parameters
 
-- In ocaml and sml, all functions take one parameter
+- This feature is called *unpacking argument list* in python
+
+- Documentation
+  https://docs.python.org/3/tutorial/controlflow.html#unpacking-argument-lists
+
+- code for this video at:
+  http://github.com/dmgerman/f-python/passing_a_list_instead
+
+* Passing a tuple or a individual parameters
+
+- In ocaml and sml, all functions take only one parameter
   - using pattern matching, it /feels/ as if we can either pass:
     - a tuple
     - or individual parameters
+  - *very nice feature*
 
 - Example:
 
   #+begin_src sml   :exports both
   fun f (a,b) = a + b
 
-  val a = (1,2)
-
   val b = f (1,2)
-  val c = f a
+
+  val p = (1,2)
+  val c = f p
   #+end_src
 
   #+RESULTS:
@@ -30,9 +41,6 @@
 
 - Called *unpacking argument list*
   
-- Full documentation:
-
-  https://docs.python.org/3/tutorial/controlflow.html#unpacking-argument-lists
 
 * Example:
 
@@ -44,20 +52,20 @@ import sys
 def f(a,b):
     return a+b
 
-print(f(3 , 2))
+print(f(3,2))
+
 t = (3, 2)
 
-
-# this will fail, we pass only one parameter, t
+# this will fail, we pass only one parameter!
 try:
     print(f(t))
 except TypeError:
     print("Sorry Dave, I cannot do that")
     print("  ", repr(sys.exception()))
 
-
 #but this does work
 print(f(*t))
+print(f(t[0],t[1]))
 #+end_src
 
 #+RESULTS:
@@ -65,6 +73,7 @@ print(f(*t))
 5
 Sorry Dave, I cannot do that
    TypeError("f() missing 1 required positional argument: 'b'")
+5
 5
 #+end_example
 
@@ -79,10 +88,12 @@ d["a"] = 10
 d["b"] = 20
 
 print(f(**d))
+print(f(d["a"],d["b"]))
 #+end_src
 
 #+RESULTS:
 #+begin_example
+30
 30
 #+end_example
 
@@ -91,6 +102,7 @@ print(f(**d))
 
 #+begin_src python   :exports both :results output
 import sys
+
 def f(a,b):
     return a+b
 
@@ -106,7 +118,7 @@ d["b"] = 20
 # c is not an argument to f
 d["c"] = 1000
 
-#but this does
+#but this does work either
 try:
     print(f(**d))
 except TypeError:

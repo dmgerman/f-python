@@ -1,4 +1,4 @@
-* Currying in Functional Python
+* Functional Python: Currying
 
 - Provided by *functools.partial*
 

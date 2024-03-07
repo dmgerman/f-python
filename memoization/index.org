@@ -1,4 +1,4 @@
-* Memoization in functional python
+* functional python: Memoization
 
 - Memoization is implemented as two decorators in python
 

@@ -1,4 +1,4 @@
-* Functional python: records/named tuples
+* Functional python: records/namedtuples
 
 - How to easily define records
 
@@ -78,6 +78,9 @@ print("Type:    ",type(a))
 # how to access its fields
 print(f"Field f1:", a.f1)
 print(f"Field f2:", a.f2)
+# we can still access it as a tuple!
+print(a[0])
+print(a[1])
 #+end_src
 
 #+RESULTS:
@@ -86,6 +89,8 @@ Value:    MyRecord(f1=10, f2='abc')
 Type:     <class '__main__.MyRecord'>
 Field f1: 10
 Field f2: abc
+10
+abc
 #+end_example
 
 
