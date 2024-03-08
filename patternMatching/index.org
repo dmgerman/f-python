@@ -1,5 +1,11 @@
 * Functional python: Pattern matching
 
+   - Video:      https://youtu.be/vnFHessufVk
+   - Rest of the [[http://github.com/dmgerman/f-python][Functional Python]] series
+
+
+* Introduction
+
 - Introduced in python 3.10
 
 - Full documentation in https://peps.python.org/pep-0636/
