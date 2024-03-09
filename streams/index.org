@@ -4,9 +4,10 @@
 - By being *lazy*, they allow the processing of potentially infinite
   sequences
 - Extremely *powerful, efficient and expressive* when
-  combined with map/filter/reduce
+  combined with map/filter/etc.
 
-- In python, streams are *called generators and iterators*
+- In python, streams are called *iterators* and *generators*
+  - technically, generators are iterators
 
 - *Do not confuse functional streams with python streams*
 
@@ -14,20 +15,26 @@
   https://docs.python.org/3/reference/expressions.html#generator-expressions
   https://peps.python.org/pep-0255/  
 
+- code for this video:
+  http://github.com/dmgerman/f-python/
+
 * How to consume a stream
 
-- given st is a stream
+- given *st* is a stream
   - calling *next(st)* returns next value (consuming it)
-- a stream cannot be rewound
+- a stream *cannot be rewound*
   - once it has advanced (using next) it cannot go back
+  - (many data structures that operate as streams
+    implement rewinding in their own methods)
 - if the stream is finite, once it is consumed,
   - the *StopIteration* exception is raised if next is called
-- *map, filter* and many other functions return streams
-  - more on that later
+- *map, filter* and many other functions process/return streams
+  - more on that in future videos
   
-* Files are streams
+* Example: Files are streams
 
-- files are typically finite streams
+- text files are typically finite streams
+- let us read [[file:input.txt][input.txt]]
 
 #+begin_src python   :exports both :results output
 import sys
@@ -80,7 +87,7 @@ Sorry Dave, I cannot do that
 
 * We can convert a collection into a stream
 
-- use iter
+- use *iter*
   https://docs.python.org/3/library/functions.html#iter
 
 #+begin_src python   :exports both :results output
@@ -110,44 +117,44 @@ Sorry Dave, I cannot do that
   https://docs.python.org/3/reference/simple_stmts.html#yield
 
 #+begin_src python   :exports both :results output
-# create an infinite stream f(1), f(2), f(3), f(4)... 
-def stream_function(f):
-    num = 1
-    # this infinite loop makes the stream infinite
-    while True:
-        yield f(num)  # <--- this is where the next value is created
-                   # and execution stops until next is called
-        num += 1
-
 def factorial(n):
     if n == 0:
         return 1
     else:
         return n * factorial(n-1)
 
+# create an infinite stream f(i), f(i+2*delta),
+#                           f(i+3*delta), ...
+def stream_function(f, i, delta):
+    num = i
+    # this infinite loop makes the stream infinite
+    while True:
+        yield f(num)  # <--- this is where the next value is created
+                   # and execution stops until next is called
+        num += delta
+
 # create a stream with the factorial of the natural numbers
-s = stream_function(factorial)
-print(next(s))
-print(next(s))
-print(next(s))
-print(next(s))
-print(next(s))
+s = stream_function(factorial, 1, 2)
+print(next(s)) # factorial(1)
+print(next(s)) # factorial(3)
+print(next(s)) # factorial(5)
+print(next(s)) # factorial(7)
 #+end_src
 
 #+RESULTS:
 #+begin_example
 1
-2
 6
-24
 120
+5040
 #+end_example
 
 * Conclusions
-
-- Streams are everywhere in python
+- /Streams/ are everywhere in python
   - called *generators* and *iterators*
+- At this point, /streams/ might look silly
+  - Very powerful in functional programming
   - we'll use them extensively in future videos
 
 - code for this video:
-  http://github.com/dmgerman/f-python/streams
+  http://github.com/dmgerman/f-python/
