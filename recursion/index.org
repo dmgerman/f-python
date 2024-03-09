@@ -1,16 +1,14 @@
-* Functional python: Recursion
+* Functional python: Tail Recursion Optimization
 
-- Full documentation in https://peps.python.org/pep-0636/
-
-- Similar to pattern matching in ML family of languages
-  - with syntax very similar to *Ocaml*
-
-- code for this video at:
+- Function python series
+- Notes at:
   http://github.com/dmgerman/f-python/recursion
 
-* Python is not tail-recursive
 
-Guido on Tail recursion: https://neopythonic.blogspot.com/2009/04/tail-recursion-elimination.html
+* Python does not have tail-recursion optimization
+
+Guido on Tail recursion: 
+https://neopythonic.blogspot.com/2009/04/tail-recursion-elimination.html
 
 #+begin_quote
 "let me defend my position (which is that I don't want
@@ -23,57 +21,113 @@ https://bugs.python.org/issue1684603
 
 * The problem
 
+- The maximum depth of the stack in python is predefined:
+  sys.getrecursionlimit()
+
 #+begin_src python   :exports both :results output
+import sys
+
+# return sum 1 to i, "tail recursive"
 def sum_up_to(i):
-   if i == 0:
-      return i
-   else:
-      return (i + sum_up_to(i-1))
+   def helper(i, acc):
+      if i == 0:
+         return acc
+      else:
+         return helper(i-1, acc+i)
+   return helper(i,0)
 
-print(sum_up_to(1000))
+print(f"Limit Stack frames: {sys.getrecursionlimit()}\n")
 
+try:
+   print(sum_up_to(1000))
+except RecursionError:
+   print("Sorry Dave, I cannot do that")
+   print("  ", repr(sys.exception()))
 #+end_src
 
 #+RESULTS:
+#+begin_example
+Limit Stack frames: 1000
 
+Sorry Dave, I cannot do that
+   RecursionError('maximum recursion depth exceeded')
+#+end_example
 
 * so what can we do?
+
+- Do not use recursion
+
+or
+
+- Change the maximum depth of the stack
+  - use a decorator
 
 #+begin_src python   :exports both :results output
 import sys
 
 def sum_up_to(i):
-   if i == 0:
-      return i
-   else:
-      return (i + sum_up_to(i-1))
+   def helper(i, acc):
+      if i == 0:
+         return acc
+      else:
+         return helper(i-1, acc+i)
+   return helper(i,0)
 
-print(f"Recursion limit: {sys.getrecursionlimit()}\n")
-
-try:
-   print(sum_up_to(100))
-   print(sum_up_to(1000))
-except RecursionError:
-   print(">>>>>Sorry Dave, I cannot do that\n")
-
-
+# will allow for the unlimited recursion at the cost of
+# memory and recomputation
+def test(n):
+   print(f"Limit Stack frames: {sys.getrecursionlimit()}")
+   try:
+      return sum_up_to(n)
+   except RecursionError:
+      print("Oops. Recursion error (only %d frames) Try again\n"%
+            (sys.getrecursionlimit(),))
+      sys.setrecursionlimit(sys.getrecursionlimit() *2)
+      test(n)
+   
+print(test(1000000))
 #+end_src
 
 #+RESULTS:
 #+begin_example
-Recursion limit: 1000
+Limit Stack frames: 1000
+Oops. Recursion error (only 1000 frames) Try again
 
-5050
->>>>>Sorry Dave, I cannot do that
+Limit Stack frames: 2000
+Oops. Recursion error (only 2000 frames) Try again
 
+Limit Stack frames: 4000
+Oops. Recursion error (only 4000 frames) Try again
+
+Limit Stack frames: 8000
+Oops. Recursion error (only 8000 frames) Try again
+
+Limit Stack frames: 16000
+Oops. Recursion error (only 16000 frames) Try again
+
+Limit Stack frames: 32000
+Oops. Recursion error (only 32000 frames) Try again
+
+Limit Stack frames: 64000
+Oops. Recursion error (only 64000 frames) Try again
+
+Limit Stack frames: 128000
+Oops. Recursion error (only 128000 frames) Try again
+
+Limit Stack frames: 256000
+Oops. Recursion error (only 256000 frames) Try again
+
+Limit Stack frames: 512000
+Oops. Recursion error (only 512000 frames) Try again
+
+Limit Stack frames: 1024000
+None
 #+end_example
 
 * Conclusions
 
-- We can only use recursion in very limited situations
+- Be careful when using recursion
   - remember to check the value of *sys.getrecursionlimit()*
-
-- code for this video at:
-  http://github.com/dmgerman/f-python/recursion
-
-
+  - it can be changed with *sys.setrecursionlimit*
+- documentation:
+    https:
