@@ -99,6 +99,94 @@ print("seconds %10.5f"%(end-start,))
 seconds    0.00010
 #+end_example
 
+* A more realistic use case
+
+This code assumes that the *table customers will not change!*
+
+- if you have a *huge* csv file, and you need to process it all
+  - /convert it into a sqlite3 database/!
+
+#+begin_src python   :exports both :results output
+import sqlite3
+import collections
+import sys
+
+Customer = collections.namedtuple("Customer", "id name")
+
+con = sqlite3.connect("file:test.db?mode=ro", uri=True)
+cur = con.cursor()
+
+def lookup_customer(id):
+    # assume id is primary key
+    print("Looking up id : ", id)
+    st = cur.execute("select id,name from customers where id = ?", (id,))
+    try:
+        return Customer(*next(st))
+    except StopIteration:
+        print("Sorry Dave, I cannot do that")
+        print("   ",sys.exception())
+        return None
+    
+print(lookup_customer(1))
+print(lookup_customer(1))
+print(lookup_customer(1))
+#+end_src
+
+#+RESULTS:
+#+begin_example
+Looking up id :  1
+Customer(id=1, name='Eren')
+Looking up id :  1
+Customer(id=1, name='Eren')
+Looking up id :  1
+Customer(id=1, name='Eren')
+#+end_example
+
+
+
+
+* Solution
+
+This code assumes that the *table customers will not change!*
+
+#+begin_src python   :exports both :results output
+import sqlite3
+import collections
+import sys
+import functools
+
+Customer = collections.namedtuple("Customer", "id name")
+
+con = sqlite3.connect("file:test.db?mode=ro", uri=True)
+cur = con.cursor()
+
+@functools.lru_cache()
+def lookup_customer(id):
+    print("Looking up id : ", id)
+    st = cur.execute("select id,name from customers where id = ?", (id,))
+    try:
+        return Customer(*next(st))
+    except StopIteration:
+        print("Sorry Dave, I cannot do that")
+        print("   ",sys.exception())
+        return None
+    
+print(lookup_customer(1))
+print(lookup_customer(1))
+print(lookup_customer(1))
+#+end_src
+
+#+RESULTS:
+#+begin_example
+Looking up id :  1
+Customer(id=1, name='Eren')
+Customer(id=1, name='Eren')
+Customer(id=1, name='Eren')
+#+end_example
+
+
+
+
 * Conclusions
 
 - Easy to use
