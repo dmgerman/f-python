@@ -1,8 +1,8 @@
-* Functional python: Tail Recursion Optimization
+* Functional python: The challenges of using Recursion
 
 - Function python series
 - Notes at:
-  http://github.com/dmgerman/f-python/recursion
+  http://github.com/dmgerman/f-python/
 
 
 * Python does not have tail-recursion optimization
@@ -83,7 +83,7 @@ def test(n):
       print("Oops. Recursion error (only %d frames) Try again\n"%
             (sys.getrecursionlimit(),))
       sys.setrecursionlimit(sys.getrecursionlimit() *2)
-      test(n)
+      return test(n)
    
 print(test(1000000))
 #+end_src
@@ -121,13 +121,18 @@ Limit Stack frames: 512000
 Oops. Recursion error (only 512000 frames) Try again
 
 Limit Stack frames: 1024000
-None
+500000500000
 #+end_example
+
 
 * Conclusions
 
 - Be careful when using recursion
   - remember to check the value of *sys.getrecursionlimit()*
   - it can be changed with *sys.setrecursionlimit*
+
 - documentation:
-    https:
+  https://docs.python.org/3/library/sys.html#sys.setrecursionlimit
+- Notes at:
+  http://github.com/dmgerman/f-python/
+
