@@ -1,4 +1,6 @@
-* functional python: Memoization
+* 006 functional python: Memoization
+
+- Useful to avoid repeated computation
 
 - Memoization is implemented as two decorators in python
 
@@ -7,6 +9,10 @@
 
 - Documentation:
   https://docs.python.org/3/library/functools.html#module-functools    
+
+- code for this video:
+  http://github.com/dmgerman/f-python/
+
     
 * Problem:
 
@@ -37,7 +43,7 @@ print(end-start, " seconds")
 
 * Solution: memoize it
 
-- it becomes almost instantaneous
+- wayyyyyy faster:
   - O(n*log n)
 - the size of the cache is not limited
   - *it might run out of memory!*
@@ -194,5 +200,5 @@ Customer(id=1, name='Eren')
   - use *lru_cache* instead of *cache*
 
 - code for this video:
-  http://github.com/dmgerman/f-python/memoization
+  http://github.com/dmgerman/f-python/
 
