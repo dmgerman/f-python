@@ -1,4 +1,12 @@
-* functional python: Streams
+* 005 functional python: Streams
+
+- Part of the Functional Python series
+  http://github.com/dmgerman/f-python/
+
+- Video:
+  - https://youtu.be/0xAS-iqGVok
+
+* Introduction
 
 - Streams are a wonderful data structure
 - By being *lazy*, they allow the processing of potentially infinite

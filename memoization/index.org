@@ -1,5 +1,13 @@
 * 006 functional python: Memoization
 
+- Part of the Functional Python series
+  http://github.com/dmgerman/f-python/
+
+- Video:
+  - https://youtu.be/0yJlIuOHuNc
+
+* Introduction
+
 - Useful to avoid repeated computation
 
 - Memoization is implemented as two decorators in python
@@ -13,16 +21,16 @@
 - code for this video:
   http://github.com/dmgerman/f-python/
 
-    
 * Problem:
 
-This code is O(2^n). fibonacci(40) takes seconds to compute
+- This code is O(2^n).
+- fibonacci(40) takes 13 seconds to compute!
 
 #+begin_src python   :exports both :results output
 import time
 
 def fibonacci(n):
-    match n:
+    match n: # pattern matching
         case 0 | 1:
             return n
         case _ :
@@ -38,11 +46,17 @@ print(end-start, " seconds")
 #+RESULTS:
 #+begin_example
 102334155
-12.838772058486938  seconds
+13.306852102279663  seconds
 #+end_example
+
 
 * Solution: memoize it
 
+- Avoid recomputing the function with the same parameters
+- Assumes that the function, for given a specific parameter
+  - will always return *same value*
+  - e.g. a *pure* function
+- Very easy to do in python using *functools.cache*
 - wayyyyyy faster:
   - O(n*log n)
 - the size of the cache is not limited
@@ -109,7 +123,7 @@ seconds    0.00010
 
 This code assumes that the *table customers will not change!*
 
-- if you have a *huge* csv file, and you need to process it all
+- if you have a *huge* csv file, and you don't need to process it all
   - /convert it into a sqlite3 database/!
 
 #+begin_src python   :exports both :results output
@@ -124,7 +138,7 @@ cur = con.cursor()
 
 def lookup_customer(id):
     # assume id is primary key
-    print("Looking up id : ", id)
+    print("    Looking up id : ", id)
     st = cur.execute("select id,name from customers where id = ?", (id,))
     try:
         return Customer(*next(st))
@@ -135,20 +149,21 @@ def lookup_customer(id):
     
 print(lookup_customer(1))
 print(lookup_customer(1))
+print(lookup_customer(2))
 print(lookup_customer(1))
 #+end_src
 
 #+RESULTS:
 #+begin_example
-Looking up id :  1
+    Looking up id :  1
 Customer(id=1, name='Eren')
-Looking up id :  1
+    Looking up id :  1
 Customer(id=1, name='Eren')
-Looking up id :  1
+    Looking up id :  2
+Customer(id=2, name='Naruto')
+    Looking up id :  1
 Customer(id=1, name='Eren')
 #+end_example
-
-
 
 
 * Solution
@@ -168,7 +183,7 @@ cur = con.cursor()
 
 @functools.lru_cache()
 def lookup_customer(id):
-    print("Looking up id : ", id)
+    print("   Looking up id : ", id)
     st = cur.execute("select id,name from customers where id = ?", (id,))
     try:
         return Customer(*next(st))
@@ -179,14 +194,17 @@ def lookup_customer(id):
     
 print(lookup_customer(1))
 print(lookup_customer(1))
+print(lookup_customer(2))
 print(lookup_customer(1))
 #+end_src
 
 #+RESULTS:
 #+begin_example
-Looking up id :  1
+   Looking up id :  1
 Customer(id=1, name='Eren')
 Customer(id=1, name='Eren')
+   Looking up id :  2
+Customer(id=2, name='Naruto')
 Customer(id=1, name='Eren')
 #+end_example
 

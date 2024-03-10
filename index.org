@@ -1,27 +1,38 @@
 
 * Functional python
-The goal of these notes is to illustrate how functional
-programming concepts are implemented (or not) in python.
+The goal of these notes and videos is to illustrate how
+functional programming concepts are implemented (or not) in
+python.
 
 ** Introduction
 
 0. [[file:intro/index.org][Introducing the Functional Python series]]
-   https://youtu.be/aYeHmZlZxXo
+   - https://youtu.be/aYeHmZlZxXo
 
 ** The concepts
 
 1. [[file:passing_a_list_instead/index.org][Passing a tuple instead of each individual parameter to a function]]:
    python's /unpacking argument list/
-   https://youtu.be/fZSp8ZETWeQ
+   - https://youtu.be/fZSp8ZETWeQ
 
 2. [[file:namedtuples/index.org][Records]]: python's /namedtuple/
+   - Video: https://youtu.be/ctO0umkmARg
 
 3. [[file:patternMatching/index.org][Pattern Matching]]: python's /structural pattern matching/
-4. Tail Recursion: python does not have tail recursion
-5. Memoization: python's /cache decorators/
-6. Currying: python's /partial application/
-7. Streams: python's /iterators/ and /generators/
+   - Video: https://youtu.be/vnFHessufVk
+
+4. [[file:recursion/index.org][Tail Recursion]]: python does not have tail recursion optimization
+   - Video: [[https://youtu.be/FxgzGRurx18]]
+     
+5. [[file:streams/][Streams]]: python's /iterators/ and /generators/
+   - Video: https://youtu.be/0xAS-iqGVok
+
+6. [[file:memoization/index.org][Memoization]]: python's /cache and lru_cache decorators/
+   - Video: https://youtu.be/0yJlIuOHuNc
+     
 8. Map and filter
+
+7. Currying: python's /partial application/
 9. Folding: reduce
 10. Stream processing: functools
 

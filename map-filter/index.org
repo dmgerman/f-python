@@ -1,0 +1,374 @@
+* 007 Map/filter part 1
+
+- Map and Filter are the workhorses of functional programming
+- this video is an introduction
+
+* map/filter are built-in operations in python
+
+  https://docs.python.org/3/library/functions.html
+
+- Provide *simple* and *efficient* stream processing
+
+* Syntax: map
+
+- takes a stream and generates a stream applying
+  f to each element of the stream
+
+#+begin_src python   :exports both
+map(f, stream)
+#+end_src
+
+* Syntax: filter
+
+- takes a stream and filters out elements of the
+  stream for which calling f is false
+
+#+begin_src python   :exports both
+filter(f, stream)
+#+end_src
+
+* Example:
+
+#+begin_src python   :exports both :results output
+def f(x):
+    return (x, x*x)
+
+def even(x):
+    return (x % 2 == 0)
+
+result = list((map(f, filter(even, [1,2,3,4,5,6]))))
+print(result)
+#+end_src
+
+#+RESULTS:
+#+begin_example
+[(2, 4), (4, 16), (6, 36)]
+#+end_example
+
+
+* My prefer way to write this type of code
+
+- I "shadow" the previous value of the stream
+- one operation per line
+- if the function is trivial, create a lambda,
+  - otherwise give it a name
+  
+#+begin_src python   :exports both :results output
+def f(x):
+    return (x, x*x)
+
+def even(x):
+    return (x % 2 == 0)
+
+# range returns a stream: 0, 1, 2, ... n-1
+result = filter(even, range(10))
+result = map(f, result)
+result = list(result)
+print(result)
+#+end_src
+
+#+RESULTS:
+#+begin_example
+[(0, 0), (2, 4), (4, 16), (6, 36), (8, 64)]
+#+end_example
+
+* A generator comprehension is a map and a filter
+- generator comprehension are equivalent to a map and a filter
+  of the corresponding stream
+
+#+begin_src python   :exports both :results output
+def f(x):
+    return (x, x*x)
+
+def even(x):
+    return (x % 2 == 0)
+
+result = filter(even, range(10))
+result = map(f, result)
+result = list(result)
+print(result)
+
+# using parenthesis to
+# create a generator comprehension
+result2 = (f(i) for i in range(10) if even(i))
+result2 = list(result2)
+
+print(result2)
+
+#+end_src
+
+#+RESULTS:
+#+begin_example
+[(0, 0), (2, 4), (4, 16), (6, 36), (8, 64)]
+[(0, 0), (2, 4), (4, 16), (6, 36), (8, 64)]
+#+end_example
+
+
+* Map and filter are lazy!
+
+- what if I *don't call list()*?
+- no data is processed
+- simple way to processed it:
+  - convert the stream into a list
+
+#+begin_src python   :exports both :results output
+def f(x):
+    print(x)
+    return (x, x*x)
+
+def even(x):
+    return (x % 2 == 0)
+
+data = range(10)
+result = filter(even, data)
+result = map(f, result)
+#result = list(result)
+print(result)
+
+result2 = (f(i) for i in data if even(i))
+#result2 = list(result2)
+
+print(result2)
+
+#+end_src
+
+#+RESULTS:
+#+begin_example
+<map object at 0x100d63eb0>
+<generator object <genexpr> at 0x100ccc660>
+#+end_example
+
+
+* It is like a production line!
+
+- map and filter set each a
+  *processing station*
+- data is only processed when needed
+  - *lazy evaluation!*
+
+#+begin_src python   :exports both :results output
+def f(x):
+    print("Inside f", x)
+    return (x, x*x)
+
+def even(x):
+    print("Inside even: ", x)
+    return (x % 2 == 0)
+
+# note that range would generate a lot of values
+data = range(10000000000000000000000)
+result = filter(even, data)
+result = map(f, result)
+print("Give me one")
+# processing of the stream starts here
+print(next(result))
+print("Give me another")
+print(next(result))
+#+end_src
+
+#+RESULTS:
+#+begin_example
+Give me one
+Inside even:  0
+Inside f 0
+(0, 0)
+Give me another
+Inside even:  1
+Inside even:  2
+Inside f 2
+(2, 4)
+#+end_example
+
+
+* use islice to process a given number of elements
+- itertools.islice returns a stream of finite size
+
+#+begin_src python   :exports both :results output
+import itertools 
+
+def f(x):
+    print("Inside f", x)
+    return (x, x*x)
+
+def even(x):
+    print("Inside even: ", x)
+    return (x % 2 == 0)
+
+# note that range would generate a lot of values
+result = filter(even, range(10000000000000000000000))
+result = map(f, result)
+result = itertools.islice(result, 10)
+result = list(result)
+print("Result: ", result)
+
+#+end_src
+
+#+RESULTS:
+#+begin_example
+Inside even:  0
+Inside f 0
+Inside even:  1
+Inside even:  2
+Inside f 2
+Result:  [(0, 0), (2, 4)]
+#+end_example
+
+* Sometimes we don't care for the result value of the stream
+
+- we just want to consume it.
+  - the processing of the stream has side-effects
+- This code does nothing:
+
+#+begin_src python   :exports both :results output
+map(print, range(10))
+#+end_src
+
+#+RESULTS:
+
+- this creates a list of the same size as the stream
+  - print returns None
+
+#+begin_src python   :exports both :results output
+result = list(map(print, range(5)))
+print(" ---- done")
+print(result)
+#+end_src
+
+#+RESULTS:
+#+begin_example
+0
+1
+2
+3
+4
+ ---- done
+[None, None, None, None, None]
+#+end_example
+
+* deque best way to consume a stream: 
+
+#+begin_src python   :exports both :results output
+import collections
+
+collections.deque (map(print, range(5)),maxlen=0)
+print(" ---- done")
+#+end_src
+
+#+RESULTS:
+#+begin_example
+0
+1
+2
+3
+4
+ ---- done
+#+end_example
+
+* But I prefer consume
+
+- one of the recipes in *itertools*
+  https://docs.python.org/3/library/itertools.html#itertools-recipes
+
+- implemented in *more-itertools*
+
+- consume all or a given number of elements from the stream
+  https://more-itertools.readthedocs.io/en/stable/api.html#more_itertools.consume
+
+#+begin_src python   :exports both :results output
+import collections
+import itertools
+import more_itertools
+
+more_itertools.consume(map(print, range(5)))
+print(" ---- done")
+more_itertools.consume(map(print, range(50000000000000)),2)
+print(" ---- done")
+#+end_src
+
+#+RESULTS:
+#+begin_example
+0
+1
+2
+3
+4
+ ---- done
+0
+1
+ ---- done
+#+end_example
+
+* Let us put everything together
+
+- Assume we have 2 csv files:
+  - orders.csv:    orderid, customerid, date, amount
+  - customers.csv: customerid, cname, contact, country
+
+- we want to compute a join, equivalent to:
+
+  #+begin_src sql   :exports both
+  select date, order from
+    orders join customers using (customerid)
+    where country = 'Germany'
+  #+end_src
+
+* Doing a join
+
+- a join is syntactic sugar for a cross-product and a selection
+
+- equivalent to this query:
+  
+  #+begin_src sql   :exports both
+  select date, order from
+      (select orderid, orders.customerid, date, amount,
+              cname, contact, country 
+       from orders, customers
+       where orders.customerid = customers.customerid)
+    where country = 'Germany'
+  #+end_src
+
+* in python: 
+
+- we follow the same logic as the query
+
+#+begin_src python   :exports both :results output
+import itertools
+import csv
+import collections
+import more_itertools
+
+Order     = collections.namedtuple('Orders',    'orderid cid orderdate amount')
+Customer  = collections.namedtuple('Customers', 'cid cname contact country')
+Ord_Cust  = collections.namedtuple('Ord_Cust',
+                                   'orderid cid orderdate amount cid2 cname contact country')
+
+with open('orders.csv') as forders, open('customers.csv') as fcustomers:
+    # get data
+    orders = csv.reader(forders, delimiter=',')
+    orders = map(lambda x: Order(*x), orders)
+
+    customers = csv.reader(fcustomers, delimiter=',')
+    customers = map(lambda x: Customer(*x), customers)
+
+    # compute the cross product 
+    result = itertools.product(orders, customers)
+    result = map(lambda x: Ord_Cust(*x[0],*x[1]), result)
+
+    # do join
+    result = filter(lambda x: x.cid == x.cid2, result)
+    # do selection
+    result = filter(lambda x: x.country == 'Germany', result)
+    # do projection
+    result = map(lambda x: "Order: %s Date: %s Country: %s"%
+                 (x.orderid, x.orderdate, x.country), result)
+
+    result = map(print, result)
+    more_itertools.consume(result)
+
+#+end_src
+
+#+RESULTS:
+#+begin_example
+Order: 10309 Date: 1996-09-19 Country: Germany
+Order: 10310 Date: 1996-09-20 Country: Germany
+#+end_example

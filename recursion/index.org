@@ -1,8 +1,8 @@
 * Functional python: The challenges of using Recursion
 
-- Function python series
-- Notes at:
-  http://github.com/dmgerman/f-python/
+- Part of the [[http://github.com/dmgerman/f-python][Functional Python]] series
+
+- Video [[https://youtu.be/FxgzGRurx18]]
 
 
 * Python does not have tail-recursion optimization
