@@ -1,0 +1,164 @@
+* Functional python: *anonymous functions*
+
+- Anonymous functions are *expressions* that when evaluated
+  *return functions*
+
+- Documentation:
+  https://docs.python.org/3/reference/expressions.html#lambda  
+  https://docs.python.org/3/tutorial/controlflow.html#lambda-expressions
+
+- Code for this video:
+  [[http://github.com/dmgerman/f-python/]]
+
+* Functions are first class citizens!
+
+- Functions should behave like any other value
+
+- This means it should be possible to create an expression
+  that *when evaluated* returns *a function* (/an anonymous function/)
+
+#+begin_src python   :exports both :results output
+def f(a,b):
+   return(a+b)
+
+g = lambda a,b:a+b
+
+print(f(2,3), g(2,3))
+#+end_src
+#+RESULTS:
+#+begin_example
+5 5
+#+end_example
+
+* It is an expression!
+
+- Called *lambda expressions*
+
+- We don't need to assign it to a variable
+  - becomes an *anonymous function*, a *lambda*
+
+#+begin_src python   :exports both :results output
+def f(x,y):
+    return x+y
+
+print(
+    f(2,3),
+    (lambda a,b:a+b) (2,3)            
+    )
+
+print(type(f))
+print(type((lambda a,b:a+b)))
+#+end_src
+
+#+RESULTS:
+#+begin_example
+5 5
+<class 'function'>
+<class 'function'>
+#+end_example
+
+* Syntax: still not quite a function
+
+- the body of a lambda function is *one expression only*!
+  - the *return value* of the function is the
+    *result of this expression*
+
+- in python, expressions are not very powerful
+  - e.g. we can't create a variable inside an expression
+
+- only *useful* for *very simple functions*
+  - but that is probably a ~good thing~
+
+- Giving a function a name *improves readability*
+
+#+begin_src python   :exports both :results output
+print((lambda n:-~n)(10))
+#+end_src
+
+#+RESULTS:
+11
+#+end_example
+
+#+begin_src python   :exports both :results output
+def add_1(n):
+    return -~n
+
+print(add_1(10))
+#+end_src
+
+#+RESULTS:
+#+begin_example
+11
+#+end_example
+
+
+* Further Limitations
+
+- Must be written in *one line*
+  - but you can use \ to use more than one
+
+- They *cannot be recursive*
+  - they don't have a name to call!
+
+#+begin_src python  :exports both :results output
+# f only exists after the right hand side of
+# the expression gets evaluated
+f = lambda i: 1 if i == 0 \
+                 else 20
+print(f(5))
+#+end_src
+#+RESULTS:
+#+begin_example
+20
+#+end_example
+
+* Why do we need lambda expressions?
+
+- Many functions take a *function as a parameter*
+
+- Frequently such parameter functions are trivial
+  - create the function with a *lambda expression* instead
+
+- ~Example~:
+
+  - *map* takes as *parameters*: a /function/ and an /iterable/ 
+    - applies the function to each element of the iterable
+    - returns a stream with the result
+#+begin_src python   :exports both :results output
+lst = [1,3,5,9]
+
+r = map (lambda x: x + 1, lst)
+
+print(list(r))
+
+# is equivalent to
+
+def add_1(x):
+    return x + 1
+
+r =  map (add_1, lst)
+
+print(list(r))
+#+end_src
+
+#+RESULTS:
+#+begin_example
+[2, 4, 6, 10]
+[2, 4, 6, 10]
+#+end_example
+
+* Conclusions
+
+- *Lambda expressions* are expressions that return
+  a function
+
+- *Lambda expression* are meant to be used for
+  very simple functionality
+  - creating a function using *def* is a better option
+
+- But that is a *good* thing:
+  - *lambda expressions* should not be used for complex code
+
+- Code for this video:
+  [[http://github.com/dmgerman/f-python/]]
+

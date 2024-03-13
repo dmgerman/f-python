@@ -29,12 +29,15 @@ python.
 
 6. [[file:memoization/index.org][Memoization]]: python's /cache and lru_cache decorators/
    - Video: https://youtu.be/0yJlIuOHuNc
-     
-8. Map and filter
 
-7. Currying: python's /partial application/
-9. Folding: reduce
-10. Stream processing: functools
+7. [[./lambdas/index.org][Anonymous Functions]]: python's /lambda expressions/
+   - Video: https://youtu.be/BUpCLlvgkoI
+
+8. Map/Filter
+
+9. Currying: python's /partial application/
+10. Folding: reduce
+11. Stream processing: functools
 
 ** Advanced
 
