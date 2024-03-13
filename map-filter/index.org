@@ -1,4 +1,12 @@
 * Functional python: map and filter
+- Part of the Functional Python series
+  http://github.com/dmgerman/f-python/
+
+- Video:
+  - https://youtu.be/TCqVRNEfU9o
+
+
+* Introduction
 
 - *map* and *filter* are the workhorses of functional programming
 
