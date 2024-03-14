@@ -33,7 +33,8 @@ python.
 7. [[./lambdas/index.org][Anonymous Functions]]: python's /lambda expressions/
    - Video: https://youtu.be/BUpCLlvgkoI
 
-8. Map/Filter
+8. [[./map-filter/index.org][map/filter]]: they are built-in Python functions
+   - Video: https://youtu.be/TCqVRNEfU9o
 
 9. Currying: python's /partial application/
 10. Folding: reduce

@@ -250,11 +250,12 @@ Result:  [(0, 0), (2, 4), (4, 16), (6, 36)]
   implementation
 
   #+begin_src sql   :exports both
-  select orderid, date, country from
-      (select orderid, orders.customerid, date, amount,
-              cname, contact, country 
+  with joined as
+      (select *
        from orders, customers
        where orders.customerid = customers.customerid)
+  select orderid, date, country
+    from joined
     where country = 'Germany'
   #+end_src
 
@@ -287,7 +288,7 @@ with open('orders.csv') as forders, open('customers.csv') as fcustomers:
     cross = itertools.product(orders, customers)
     cross = map(lambda x: Ord_Cust(*x[0],*x[1]), cross)
 
-    # at this point result is a stream of Ord_Cust
+    # at this point cross is a stream of Ord_Cust
 
     # do join
     joined = filter(lambda x: x.cid == x.cid2, cross)
