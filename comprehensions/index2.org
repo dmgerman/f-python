@@ -1,0 +1,67 @@
+*
+
+#+begin_src python   :exports both :results output
+def pair_with_square(x):
+    return (x, x*x)
+
+def is_even(x):
+    return (x % 2 == 0)
+
+def even_and_pair_with_square(stream):
+  stream = filter(is_even, stream)
+  stream = map(pair_with_square, stream)
+  return stream
+
+def even_and_pair_with_square_2(stream):
+    return (pair_with_square(i) for i in stream if is_even(i))
+
+result = even_and_pair_with_square(range(10))
+
+print(result)
+print(list(result))
+
+
+result2 = even_and_pair_with_square_2(range(10))
+print(result2)
+print(list(result2))
+
+#+end_src
+
+#+RESULTS:
+#+begin_example
+<map object at 0x102288820>
+[(0, 0), (2, 4), (4, 16), (6, 36), (8, 64)]
+<generator object even_and_pair_with_square_2.<locals>.<genexpr> at 0x1020d39f0>
+[(0, 0), (2, 4), (4, 16), (6, 36), (8, 64)]
+#+end_example
+
+
+#+begin_src python   :exports both :results output
+def even_and_pair_with_square(stream):
+  stream = filter(lambda i: i % 2 == 0, stream)
+  stream = map(lambda i: (i, i*i), stream)
+  return stream
+
+def even_and_pair_with_square_2(stream):
+    return ((i,i*i) for i in stream if i%2 == 0)
+
+result = even_and_pair_with_square(range(10))
+
+print(result)
+print(list(result))
+
+
+result2 = even_and_pair_with_square_2(range(10))
+print(result2)
+print(list(result2))
+
+#+end_src
+
+#+RESULTS:
+#+begin_example
+<map object at 0x1004d0970>
+[(0, 0), (2, 4), (4, 16), (6, 36), (8, 64)]
+<generator object even_and_pair_with_square_2.<locals>.<genexpr> at 0x10031b9f0>
+[(0, 0), (2, 4), (4, 16), (6, 36), (8, 64)]
+#+end_example
+

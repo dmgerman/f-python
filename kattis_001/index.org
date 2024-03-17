@@ -1,0 +1,63 @@
+* Solving kattis problems using Functional Programming
+
+- Episode 1: Millifærsla
+
+- Part of the *Functional Python* series
+  http://github.com/dmgerman/f-python/
+
+- Video: https://youtu.be/5GiUyfAS27E  
+  
+
+* Using Functional programming
+
+- The principles of *FP* are *simple*:
+  - *lazy computation*
+    - stream based operations
+    - filter, map, etc
+  - *no mutation*
+    - more on this in a later video      
+
+- The challenge of FP is *learning to use* it!
+
+* Solving kattis problems
+
+- Kattis is a great repository of problems
+
+- [[https://open.kattis.com][open.kattis.com]]
+
+- Great practice to improve your programming skills  
+
+
+* A simple problem: millifaersla
+
+https://open.kattis.com/problems/millifaersla/
+
+- Read 3 numbers, each associated with a string
+ - "Monnei", "Fjee", and "Dolladollabilljoll"
+- Find the smallest number and print its
+  corresponding string.
+
+- Example:
+  - Given 3, 9 and 7, print "Monnei"
+  - given 323, 19, 999, print "Fjee"
+
+** Extra requirement
+
+- can you do it without any comparison?
+
+* Solution
+  [[/tmp/milli/millifaersla.py][millifaersla.py]]
+
+
+* Finally...
+
+- *Learning* Functional Programming
+  takes practice
+- Start by *solving simple problems*
+  using *FP principles*
+- Kattis is a great resource  
+  
+- Part of the *Functional Python* series
+  http://github.com/dmgerman/f-python/
+
+

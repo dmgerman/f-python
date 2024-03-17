@@ -1,0 +1,241 @@
+* Comprehensions are functional programming
+
+- *Comprehensions* are equivalent to *map* and *filter*
+
+- Part of the *functional python series*
+  [[http://github.com/dmgerman/f-python/]]
+
+- Video:
+  https://youtu.be/vcDZwVbdh_w
+
+* *map* and *filter*
+
+From the previous video:
+
+- For all even numbers between 0 and 9 that are even,
+  print the number and its square.
+
+#+begin_src python   :exports both :results output
+def even_and_pair_with_square(stream):
+  stream = filter(lambda x: x%2 == 0, stream)
+  stream = map(lambda x: (x, x*x), stream)
+  return stream
+
+result = even_and_pair_with_square(range(10))
+print(result)
+print(list(result))
+#+end_src
+
+#+RESULTS:
+#+begin_example
+<map object at 0x10253c400>
+[(0, 0), (2, 4), (4, 16), (6, 36), (8, 64)]
+#+end_example
+
+* Let us rewrite it
+
+#+begin_src python   :exports both :results output
+def even_and_pair_with_square(stream):
+  stream = filter(lambda x: x%2 == 0, stream)
+  stream = map(lambda x: (x, x*x), stream)
+  return stream
+
+result = even_and_pair_with_square(range(10))
+print(result)
+print(list(result))
+
+def even_and_pair_with_square_2(stream):
+  return ( (x, x*x) for x in stream if x%2 == 0)
+
+result2 = even_and_pair_with_square_2(range(10))
+print(result2)
+print(list(result2))
+#+end_src
+
+#+RESULTS:
+#+begin_example
+<map object at 0x103204730>
+[(0, 0), (2, 4), (4, 16), (6, 36), (8, 64)]
+<generator object even_and_pair_with_square_2.<locals>.<genexpr> at 0x10304f9f0>
+[(0, 0), (2, 4), (4, 16), (6, 36), (8, 64)]
+#+end_example
+
+* A generator comprehension!
+
+- A *generator comprehension*:
+  - takes a stream
+  - does a *filter* then a *map*
+    - ~in that order~
+  - returns a stream
+  - the generator is *lazy!*
+
+#+begin_src python   :exports both :results output
+def even_and_pair_with_square(stream):
+  stream = filter(lambda i: i % 2 == 0, stream)
+  stream = map(lambda i: (i, i*i), stream)
+  return stream
+
+result = even_and_pair_with_square(range(10))
+print(result)
+print(list(result))
+
+def even_and_pair_with_square_2(stream):
+  return ((i,i*i) for i in stream if i%2 == 0 )
+
+result2 = even_and_pair_with_square_2(range(10))
+print(result2)
+print(list(result2))
+#+end_src
+
+#+RESULTS:
+#+begin_example
+<map object at 0x100c54730>
+[(0, 0), (2, 4), (4, 16), (6, 36), (8, 64)]
+<generator object even_and_pair_with_square_2.<locals>.<genexpr> at 0x100a9f9f0>
+[(0, 0), (2, 4), (4, 16), (6, 36), (8, 64)]
+#+end_example
+
+
+* We can have more than one *if*
+- equivalent to an extra filter
+
+#+begin_src python   :exports both :results output
+def even_and_pair_with_square(stream):
+  stream = filter(lambda i: i > 5, stream)
+  stream = filter(lambda i: i % 2 == 0, stream)
+  stream = map(lambda i: (i, i*i), stream)
+  return stream
+
+result = even_and_pair_with_square(range(10))
+print(result)
+print(list(result))
+
+def even_and_pair_with_square_2(stream):
+  return ((i,i*i) for i in stream if i > 5 if i%2 == 0 )
+
+result2 = even_and_pair_with_square_2(range(10))
+print(result2)
+print(list(result2))
+#+end_src
+
+#+RESULTS:
+#+begin_example
+<map object at 0x10282c880>
+[(6, 36), (8, 64)]
+<generator object even_and_pair_with_square_2.<locals>.<genexpr> at 0x1026779f0>
+[(6, 36), (8, 64)]
+#+end_example
+
+* No need to use *if*
+
+#+begin_src python   :exports both :results output
+def pair_with_square(stream):
+  stream = map(lambda i: (i, i*i), stream)
+  return stream
+
+def pair_with_square_2(stream):
+  return ((i,i*i) for i in stream )
+
+result = pair_with_square(range(10))
+print(result)
+print(list(result))
+
+result2 = pair_with_square_2(range(10))
+print(result2)
+print(list(result2))
+#+end_src
+
+#+RESULTS:
+#+begin_example
+<map object at 0x100520640>
+[(0, 0), (1, 1), (2, 4), (3, 9), (4, 16), (5, 25), (6, 36), (7, 49), (8, 64), (9, 81)]
+<generator object pair_with_square_2.<locals>.<genexpr> at 0x10036b9f0>
+[(0, 0), (1, 1), (2, 4), (3, 9), (4, 16), (5, 25), (6, 36), (7, 49), (8, 64), (9, 81)]
+#+end_example
+
+
+* More than one *for*?
+- it becomes a cross product of streams
+- equivalent to using *itertools.product*
+- it can be implemented with map
+  - map each element of the first stream with the second
+
+#+begin_src python   :exports both :results output
+import itertools
+
+st1 = range(5)
+st2 = range(3)
+
+result = ((i,j) for i in st1 for j in st2)
+
+print(result)
+print(list(result))
+
+result = itertools.product(st1, st2)
+
+print(result)
+print(list(result))
+#+end_src
+
+#+RESULTS:
+#+begin_example
+range(0, 5)
+<generator object <genexpr> at 0x100554ba0>
+[(0, 0), (0, 1), (0, 2), (1, 0), (1, 1), (1, 2), (2, 0), (2, 1), (2, 2), (3, 0), (3, 1), (3, 2), (4, 0), (4, 1), (4, 2)]
+<itertools.product object at 0x100607d00>
+[(0, 0), (0, 1), (0, 2), (1, 0), (1, 1), (1, 2), (2, 0), (2, 1), (2, 2), (3, 0), (3, 1), (3, 2), (4, 0), (4, 1), (4, 2)]
+#+end_example
+
+
+* What if we use *[]* instead of *()*?
+
+- returns a list
+- becomes a *list comprehension*
+- *not lazy*
+
+#+begin_src python   :exports both :results output
+def even_and_pair_with_square(stream):
+  stream = filter(lambda i: i > 5, stream)
+  stream = filter(lambda i: i % 2 == 0, stream)
+  stream = map(lambda i: (i, i*i), stream)
+  stream = list(stream)
+  return stream
+
+def even_and_pair_with_square_2(stream):
+    return [(i,i*i) for i in stream if i > 5 if i%2 == 0 ]
+
+result = even_and_pair_with_square(range(10))
+print(result)
+
+result2 = even_and_pair_with_square_2(range(10))
+print(result2)
+#+end_src
+
+#+RESULTS:
+#+begin_example
+[(6, 36), (8, 64)]
+[(6, 36), (8, 64)]
+#+end_example
+
+#+RESULTS:#+begin_example
+<map object at 0x100730760>
+[(6, 36), (8, 64)]
+#+end_example
+
+* Main drawback of generators?
+
+- the filter happens *before* the map
+
+* Conclusion
+
+- A *generator comprehension* are functional:
+  - equivalent to zero or more *filter* and
+    at least one *map*
+    - in that order
+
+- They are *functional*:
+  - *lazy*
+
+- Code for this video:
+  [[http://github.com/dmgerman/f-python/]]
+  

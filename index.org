@@ -36,9 +36,13 @@ python.
 8. [[./map-filter/index.org][map/filter]]: they are built-in Python functions
    - Video: https://youtu.be/TCqVRNEfU9o
 
-9. Currying: python's /partial application/
-10. Folding: reduce
-11. Stream processing: functools
+9. [[./comprehensions/index.org][Comprehensions]]: python comprehensions are functional programming
+   - Video:  https://youtu.be/vcDZwVbdh_w
+
+K01. [[./kattis_001/index.org][Kattis problems #1]]: ~Practice~: solving millifaersla
+  - Video https://youtu.be/5GiUyfAS27E
+
+
 
 ** Advanced
 
