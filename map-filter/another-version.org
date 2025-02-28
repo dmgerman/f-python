@@ -1,0 +1,235 @@
+:PROPERTIES:
+:ID:       id-20250227-203935
+:TRIGGER:  org-gtd-next-project-action org-gtd-update-project-task!
+:END:
+
+
+#+begin_src python   :exports both :results output
+import csv
+from collections import namedtuple
+
+def load_csv(filename, fieldnames, tuple_name):
+    with open(filename, newline='', encoding='utf-8') as file:
+        reader = csv.reader(file)
+        Row = namedtuple(tuple_name, fieldnames)
+        return [Row(*row) for row in reader]
+
+def main():
+    Order = namedtuple('Order', ['orderid', 'cid', 'date', 'amount'])
+    Customer = namedtuple('Customer', ['cid', 'cname', 'contact', 'country'])
+    
+    orders = load_csv('orders.csv', Order._fields, 'Order')
+    customers = {row.cid: row for row in load_csv('customers.csv', Customer._fields, 'Customer')}
+    
+    for order in orders:
+        customer = customers.get(order.cid)
+        if customer and customer.country == 'Germany':
+            print(order.orderid, order.date, customer.country)
+
+if __name__ == "__main__":
+    main()
+
+#+end_src
+
+#+RESULTS:
+#+begin_example
+{'1': Customer(cid='1', cname='Alfreds Futterkiste', contact='Maria Anders', country='Germany'), '2': Customer(cid='2', cname='Ana Trujillo Emparedados y helados', contact='Ana Trujillo', country='Mexico'), '3': Customer(cid='3', cname='Antonio Moreno Taquería', contact='Antonio Moreno', country='Mexico')}
+10309 1996-09-19 Germany
+10310 1996-09-20 Germany
+#+end_example
+
+
+#+begin_src python   :exports both :results output
+import csv
+import collections
+import itertools
+
+Order     = collections.namedtuple('Orders',    'orderid cid date amount')
+Customer  = collections.namedtuple('Customers', 'cid cname contact country')
+# for cross product result
+Ord_Cust  = collections.namedtuple('Ord_Cust',
+                                   'orderid cid date amount cid2 cname contact country')
+
+def load_csv(filename, nt):
+    with open(filename)as f:
+        data = csv.reader(f, delimiter=',')
+        data = itertools.starmap(nt, data)
+        return list(data)
+
+orders    = load_csv('orders.csv', Order)
+customers = load_csv('customers.csv', Customer)
+
+
+# compute the cross product 
+cross = itertools.product(orders, customers)
+cross = map(lambda x: Ord_Cust(*x[0],*x[1]), cross)
+
+# at this point cross is a stream of Ord_Cust
+
+# do join
+joined = filter(lambda x: x.cid == x.cid2, cross)
+
+    # do selection
+result = filter(lambda x: x.country == 'Germany', joined)
+    # do projection
+result = map(lambda x: "Order: %s Date: %s Country: %s"%
+                 (x.orderid, x.date, x.country), result)
+
+result = map(print, result)
+    # consume the stream
+    # convert to alist to process map
+    #   we'll address this in a future video
+list(result)
+#+end_src
+
+#+RESULTS:
+#+begin_example
+Order: 10309 Date: 1996-09-19 Country: Germany
+Order: 10310 Date: 1996-09-20 Country: Germany
+#+end_example
+
+
+#+begin_src python   :exports both :results output
+import csv
+import collections
+import itertools
+
+Order     = collections.namedtuple('Orders',    'orderid cid date amount')
+Customer  = collections.namedtuple('Customers', 'cid cname contact country')
+# for cross product result
+Ord_Cust  = collections.namedtuple('Ord_Cust',
+                                   'orderid cid date amount cid2 cname contact country')
+
+with open('orders.csv') as forders, open('customers.csv') as fcustomers:
+    # get data
+    orders = itertools.starmap(Order, csv.reader(forders, delimiter=','))
+
+    customers = itertools.starmap(Customer, csv.reader(fcustomers, delimiter=','))
+
+    # compute the cross product 
+    cross = itertools.product(orders, customers)
+    cross = map(lambda x: Ord_Cust(*x[0],*x[1]), cross)
+
+    # at this point cross is a stream of Ord_Cust
+
+    # do join
+    joined = filter(lambda x: x.cid == x.cid2, cross)
+
+    # do selection
+    result = filter(lambda x: x.country == 'Germany', joined)
+    # do projection
+    result = map(lambda x: "Order: %s Date: %s Country: %s"%
+                 (x.orderid, x.date, x.country), result)
+    result = map(print, result)
+    # consume the stream
+    # convert to alist to process map
+    #   we'll address this in a future video
+    list(result)
+#+end_src
+
+#+RESULTS:
+#+begin_example
+Order: 10309 Date: 1996-09-19 Country: Germany
+Order: 10310 Date: 1996-09-20 Country: Germany
+#+end_example
+
+
+#+begin_src python   :exports both :results output 
+f = lambda x: x + 1
+
+print(f(10))
+#+end_src
+
+#+RESULTS:
+#+begin_example
+11
+#+end_example
+
+
+#+begin_src python   :exports both :results output
+import csv
+import collections
+import itertools
+import sys
+
+Order     = collections.namedtuple('Orders',    'orderid cid date amount')
+Customer  = collections.namedtuple('Customers', 'cid cname contact country')
+# for cross product result
+Ord_Cust  = collections.namedtuple('Ord_Cust',
+                                   'orderid cid date amount cid2 cname contact country')
+
+with open('orders.csv') as forders, open('customers.csv') as fcustomers:
+    # get data
+    orders = itertools.starmap(Order, csv.reader(forders, delimiter=','))
+
+    customers = {c.cid: c
+                 for c in itertools.starmap(Customer, csv.reader(fcustomers, delimiter=','))}
+
+    def join_customer(order):
+        customer = customers.get(order.cid)
+        return Ord_Cust(*order, *customer)
+
+    # compute the join
+    joined = map(join_customer, orders)
+    # do selection
+    result = filter(lambda x: x.country == 'Germany', joined)
+    # do projection
+    result = map(lambda x: "Order: %s Date: %s Country: %s"%
+                 (x.orderid, x.date, x.country), result)
+    result = map(print, result)
+    # consume the stream
+    # convert to alist to process map
+    #   we'll address this in a future video
+    list(result)
+#+end_src
+
+#+RESULTS:
+#+begin_example
+Order: 10309 Date: 1996-09-19 Country: Germany
+Order: 10310 Date: 1996-09-20 Country: Germany
+#+end_example
+
+
+
+#+begin_src python   :exports both :results output
+import csv
+import collections
+import itertools
+import sys
+
+Order     = collections.namedtuple('Orders',    'orderid cid date amount')
+Customer  = collections.namedtuple('Customers', 'cid cname contact country')
+# for cross product result
+Ord_Cust  = collections.namedtuple('Ord_Cust',
+                                   'orderid cid date amount cid2 cname contact country')
+
+with open('customers.csv') as fcustomers:
+  customers = {c.cid: c
+               for c in itertools.starmap(Customer, csv.reader(fcustomers, delimiter=','))
+               }
+
+with open('orders.csv') as forders:
+    # get data
+    orders = itertools.starmap(Order, csv.reader(forders, delimiter=','))
+
+    def join_customer(order):
+        customer = customers.get(order.cid)
+        return Ord_Cust(*order, *customer) if customer != None else None
+
+    # compute the join
+    result = (join_customer(o) for o in orders)
+
+    result = ("Order: %s Date: %s Country: %s"%
+              (oc.orderid, oc.date, oc.country)
+              for oc in result if oc.country == 'Germany')
+              
+    result = map(print, result)
+
+    list(result)
+#+end_src
+
+#+RESULTS:
+#+begin_example
+Order: 10309 Date: 1996-09-19 Country: Germany
+Order: 10310 Date: 1996-09-20 Country: Germany
+#+end_example
